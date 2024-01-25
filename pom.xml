@@ -8,10 +8,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.unir</groupId>
-	<artifactId>inventory-orders</artifactId>
+	<artifactId>library-loans</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>products</name>
-	<description>Aplicación que gestiona los productos de una tienda</description>
+	<description>Aplicación que gestiona los prestamos de una biblioteca</description>
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>

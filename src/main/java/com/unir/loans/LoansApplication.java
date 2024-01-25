@@ -1,4 +1,4 @@
-package com.unir.orders;
+package com.unir.loans;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-public class OrdersApplication {
+public class LoansApplication {
 
   @LoadBalanced
   @Bean
@@ -16,7 +16,7 @@ public class OrdersApplication {
   }
 
   public static void main(String[] args) {
-    SpringApplication.run(OrdersApplication.class, args);
+    SpringApplication.run(LoansApplication.class, args);
   }
 
 }

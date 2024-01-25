@@ -1,6 +1,6 @@
-package com.unir.orders.facade;
+package com.unir.loans.facade;
 
-import com.unir.orders.model.Product;
+import com.unir.loans.model.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ProductsFacade {
+public class BooksFacade {
 
   @Value("${getProduct.url}")
   private String getProductUrl;

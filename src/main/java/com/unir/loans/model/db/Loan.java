@@ -1,4 +1,4 @@
-package com.unir.orders.model.db;
+package com.unir.loans.model.db;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,14 +6,14 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "loans")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-public class Order {
+public class Loan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

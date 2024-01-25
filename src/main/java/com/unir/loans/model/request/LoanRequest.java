@@ -1,4 +1,4 @@
-package com.unir.orders.model.request;
+package com.unir.loans.model.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderRequest {
+public class LoanRequest {
 
 	//Validacion con Jakarta Validation API
 	//Info de todas las validaciones disponibles out-of-the-box: https://jakarta.ee/specifications/bean-validation/3.0/jakarta-bean-validation-spec-3.0.html#builtinconstraints

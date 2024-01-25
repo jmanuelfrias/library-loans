@@ -1,4 +1,4 @@
-package com.unir.orders.model;
+package com.unir.loans.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
