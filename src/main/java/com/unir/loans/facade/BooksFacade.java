@@ -1,6 +1,6 @@
 package com.unir.loans.facade;
 
-import com.unir.loans.model.Product;
+import com.unir.loans.model.Book;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,25 +14,25 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class BooksFacade {
 
-  @Value("${getProduct.url}")
-  private String getProductUrl;
+  @Value("${getBook.url}")
+  private String getBookUrl;
 
   private final RestTemplate restTemplate;
 
-  public Product getProduct(String id) {
+  public Book getBook(String id) {
 
     try {
-      String url = String.format(getProductUrl, id);
-      log.info("Getting product with ID {}. Request to {}", id, url);
-      return restTemplate.getForObject(url, Product.class);
+      String url = String.format(getBookUrl, id);
+      log.info("Getting book with ID {}. Request to {}", id, url);
+      return restTemplate.getForObject(url, Book.class);
     } catch (HttpClientErrorException e) {
-      log.error("Client Error: {}, Product with ID {}", e.getStatusCode(), id);
+      log.error("Client Error: {}, Book with ID {}", e.getStatusCode(), id);
       return null;
     } catch (HttpServerErrorException e) {
-      log.error("Server Error: {}, Product with ID {}", e.getStatusCode(), id);
+      log.error("Server Error: {}, Book with ID {}", e.getStatusCode(), id);
       return null;
     } catch (Exception e) {
-      log.error("Error: {}, Product with ID {}", e.getMessage(), id);
+      log.error("Error: {}, Book with ID {}", e.getMessage(), id);
       return null;
     }
   }

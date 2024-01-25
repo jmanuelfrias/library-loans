@@ -20,7 +20,7 @@ public class LoanRequest {
 	//Customizacion de mensajes: https://www.baeldung.com/spring-validation-message-interpolation
 	//Customizacion de validaciones(1): https://www.baeldung.com/javax-validation-method-constraints
 	//Customizacion de validaciones (2): https://medium-parser-seven.vercel.app/?url=https://medium.com/thedevproject/unlock-the-power-of-jakarta-validation-with-spring-boot-boost-your-java-development-skills-c2ea676f1157
-	@NotNull(message = "`products` cannot be null")
-	@NotEmpty(message = "`products` cannot be empty")
-	private List<String> products;
+	@NotNull(message = "`books` cannot be null")
+	@NotEmpty(message = "`books` cannot be empty")
+	private List<String> books;
 }

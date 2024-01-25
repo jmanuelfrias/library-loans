@@ -20,6 +20,6 @@ public class Loan {
     private Long id;
 
     @ElementCollection
-    @Column(name = "products")
-    private List<Long> products;
+    @Column(name = "books")
+    private List<Long> books;
 }
