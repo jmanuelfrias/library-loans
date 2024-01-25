@@ -1,0 +1,33 @@
+## Configuracion de Instancia
+server:
+  port: 8082
+  error:
+    include-stacktrace: on_param
+
+## Configuracion del cliente de Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+    hostname: ms-inventory-orders
+
+## Configuracion de Spring
+spring:
+  application:
+    name: ms-inventory-orders
+  datasource:
+    url: jdbc:h2:mem:testdb
+  jpa:
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+## Configuracion secundaria (custom)
+getProduct:
+  url: http://ms-inventory-products/products/%s
