@@ -12,6 +12,6 @@ public interface LoansService {
 	Loan getLoan(String id);
 
 	List<Loan> getLoans(Long user, Long book, Date minInitialDate, Date maxInitialDate,
-						Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate);
+						Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate,Boolean returned);
 
 }

@@ -34,7 +34,7 @@ public class LoanRepository {
 
 
     public List<Loan> search(Long user, Long book, Date minInitialDate, Date maxInitialDate,
-                             Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate) {
+                             Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate, Boolean returned) {
         SearchCriteria<Loan> spec = new SearchCriteria<>();
 
         if (user != null) {
@@ -44,10 +44,6 @@ public class LoanRepository {
         if (book != null) {
             spec.add(new SearchStatement("book_id", book, SearchOperation.EQUAL));
         }
-
-        List<Loan> foundLoans = repository.findAll(spec);
-
-
 
         if (maxInitialDate != null) {
             spec.add(new SearchStatement("initial_date", maxInitialDate, SearchOperation.LESS_THAN));
@@ -71,6 +67,11 @@ public class LoanRepository {
 
         if (minEndDate != null) {
             spec.add(new SearchStatement("end_date", (minEndDate), SearchOperation.GREATER_THAN));
+        }
+
+        if (returned !=null)
+        {
+            spec.add(new SearchStatement("returned", (returned), SearchOperation.EQUAL));
         }
 
         return repository.findAll(spec);

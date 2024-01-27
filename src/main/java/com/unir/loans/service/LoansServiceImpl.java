@@ -42,12 +42,12 @@ public class LoansServiceImpl implements LoansService {
 
   @Override
   public List<Loan> getLoans(Long user, Long book, Date minInitialDate, Date maxInitialDate,
-                      Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate){
+                      Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate,Boolean returned){
 
     if ( user != null || book != null || minInitialDate != null || maxInitialDate != null || minLoanedDate != null ||
-    maxLoanedDate != null || minEndDate != null || maxEndDate!= null)
+    maxLoanedDate != null || minEndDate != null || maxEndDate!= null || returned != null)
     {
-      return repository.search(user,book,minInitialDate,maxInitialDate,minLoanedDate,maxLoanedDate,minEndDate,maxEndDate);
+      return repository.search(user,book,minInitialDate,maxInitialDate,minLoanedDate,maxLoanedDate,minEndDate,maxEndDate,returned);
     }
     List<Loan> loans = repository.getLoans();
     return loans.isEmpty() ? null : loans;

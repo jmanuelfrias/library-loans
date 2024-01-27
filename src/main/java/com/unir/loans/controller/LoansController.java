@@ -74,10 +74,12 @@ public class LoansController {
             @Parameter(name = "minEndDate", description = "Fecha mínima de fin del préstamo", example = "012345")
             @RequestParam(required = false) Date minEndDate,
             @Parameter(name = "maxEndDate", description = "Fecha máxima de fin del préstamo", example = "012345")
-            @RequestParam(required = false) Date maxEndDate
+            @RequestParam(required = false) Date maxEndDate,
+            @Parameter(name = "returned", description = "Marca si el libro ha sido devuelto", example = "true")
+            @RequestParam(required = false) Boolean returned
           ) {
 
-        List<Loan> loans = service.getLoans(user,book,minInitialDate,maxInitialDate,minLoanedDate,maxLoanedDate,minEndDate,maxEndDate);
+        List<Loan> loans = service.getLoans(user,book,minInitialDate,maxInitialDate,minLoanedDate,maxLoanedDate,minEndDate,maxEndDate,returned);
         return ResponseEntity.ok(Objects.requireNonNullElse(loans, Collections.emptyList()));
     }
 

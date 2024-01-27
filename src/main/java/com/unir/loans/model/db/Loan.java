@@ -34,4 +34,7 @@ public class Loan {
 
     @Column(name = "end_date")
     private Date end_date;
+
+    @Column(name = "returned")
+    private Boolean returned;
 }
