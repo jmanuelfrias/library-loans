@@ -3,7 +3,7 @@ package com.unir.loans.model.db;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.sql.Date;
 
 @Entity
 @Table(name = "loans")
@@ -19,7 +19,18 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ElementCollection
-    @Column(name = "books")
-    private List<Long> books;
+    @Column(name = "userId")
+    private Long userId;
+
+    @Column(name = "bookId")
+    private Long bookId;
+
+    @Column(name = "initialDate")
+    private Date initialDate;
+
+    @Column(name = "loanedDate")
+    private Date loanedDate;
+
+    @Column(name = "endDate")
+    private Date endDate;
 }

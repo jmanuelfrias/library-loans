@@ -1,17 +1,15 @@
 package com.unir.loans.service;
 
 import com.unir.loans.data.LoanJpaRepository;
+import com.unir.loans.data.LoanRepository;
 import com.unir.loans.model.db.Loan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.unir.loans.facade.BooksFacade;
-import com.unir.loans.model.Book;
-import com.unir.loans.model.request.LoanRequest;
 
 @Service
 public class LoansServiceImpl implements LoansService {
@@ -20,8 +18,8 @@ public class LoansServiceImpl implements LoansService {
   private BooksFacade booksFacade;
 
   @Autowired //Inyeccion por campo (field injection). Es la menos recomendada.
-  private LoanJpaRepository repository;
-
+  private LoanRepository repository;
+/*
   @Override
   public Loan createLoan(LoanRequest request) {
 
@@ -34,16 +32,27 @@ public class LoansServiceImpl implements LoansService {
       repository.save(loan);
       return loan;
     }
-  }
+  }*/
 
   @Override
   public Loan getLoan(String id) {
-    return repository.findById(Long.valueOf(id)).orElse(null);
+    return repository.findById(Long.valueOf(id));
   }
 
+
   @Override
-  public List<Loan> getLoans() {
-    List<Loan> loans = repository.findAll();
+  public List<Loan> getLoans(Long user, Long book, Date minInitialDate, Date maxInitialDate,
+                      Date minLoanedDate, Date maxLoanedDate, Date minEndDate, Date maxEndDate){
+
+    if ( user != null || book != null || minInitialDate != null || maxInitialDate != null || minLoanedDate != null ||
+    maxLoanedDate != null || minEndDate != null || maxEndDate!= null)
+    {
+      return repository.search(user,book,minInitialDate,maxInitialDate,minLoanedDate,maxLoanedDate,minEndDate,maxEndDate);
+    }
+    List<Loan> loans = repository.getLoans();
     return loans.isEmpty() ? null : loans;
+
+
   }
+
 }
