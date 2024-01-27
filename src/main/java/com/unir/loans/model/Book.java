@@ -14,9 +14,14 @@ import lombok.ToString;
 @Builder
 @ToString
 public class Book {
-	private Long id;
-	private String name;
-	private String country;
-	private String description;
-	private Boolean visible;
+
+	private String title;
+	private String author;
+	private Integer yearPublication ;
+	private String caratula;
+	private Integer availability;
+	private String sinopsis;
+	private String genre;
+	private Float puntuation;
+	private String tags;
 }

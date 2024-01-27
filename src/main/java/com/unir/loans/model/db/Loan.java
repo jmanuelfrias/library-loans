@@ -1,5 +1,6 @@
 package com.unir.loans.model.db;
 
+import com.unir.loans.model.Book;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,18 +20,18 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "userId")
-    private Long userId;
+    @Column(name = "user_id")
+    private Long user_id;
 
-    @Column(name = "bookId")
-    private Long bookId;
+    @Column(name = "book_id")
+    private Long book_id;
 
-    @Column(name = "initialDate")
-    private Date initialDate;
+    @Column(name = "initial_date")
+    private Date initial_date;
 
-    @Column(name = "loanedDate")
-    private Date loanedDate;
+    @Column(name = "loaned_date")
+    private Date loaned_date;
 
-    @Column(name = "endDate")
-    private Date endDate;
+    @Column(name = "end_date")
+    private Date end_date;
 }

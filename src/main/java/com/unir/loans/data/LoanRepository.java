@@ -38,35 +38,39 @@ public class LoanRepository {
         SearchCriteria<Loan> spec = new SearchCriteria<>();
 
         if (user != null) {
-            spec.add(new SearchStatement("userId", user, SearchOperation.EQUAL));
+            spec.add(new SearchStatement("user_id", user, SearchOperation.EQUAL));
         }
 
         if (book != null) {
-            spec.add(new SearchStatement("bookId", book, SearchOperation.EQUAL));
+            spec.add(new SearchStatement("book_id", book, SearchOperation.EQUAL));
         }
 
+        List<Loan> foundLoans = repository.findAll(spec);
+
+
+
         if (maxInitialDate != null) {
-            spec.add(new SearchStatement("initialDate", String.valueOf(maxInitialDate), SearchOperation.LESS_THAN));
+            spec.add(new SearchStatement("initial_date", maxInitialDate, SearchOperation.LESS_THAN));
         }
 
         if (minInitialDate != null) {
-            spec.add(new SearchStatement("initialDate", String.valueOf(minInitialDate), SearchOperation.GREATER_THAN));
+            spec.add(new SearchStatement("initial_date", (minInitialDate), SearchOperation.GREATER_THAN));
         }
 
         if (maxLoanedDate != null) {
-            spec.add(new SearchStatement("loanedDate", String.valueOf(maxLoanedDate), SearchOperation.LESS_THAN));
+            spec.add(new SearchStatement("loaned_date", (maxLoanedDate), SearchOperation.LESS_THAN));
         }
 
         if (minLoanedDate != null) {
-            spec.add(new SearchStatement("loanedDate", String.valueOf(minLoanedDate), SearchOperation.GREATER_THAN));
+            spec.add(new SearchStatement("loaned_date", (minLoanedDate), SearchOperation.GREATER_THAN));
         }
 
         if (maxEndDate != null) {
-            spec.add(new SearchStatement("endDate", String.valueOf(maxEndDate), SearchOperation.LESS_THAN));
+            spec.add(new SearchStatement("end_date", (maxEndDate), SearchOperation.LESS_THAN));
         }
 
         if (minEndDate != null) {
-            spec.add(new SearchStatement("endDate", String.valueOf(minEndDate), SearchOperation.GREATER_THAN));
+            spec.add(new SearchStatement("end_date", (minEndDate), SearchOperation.GREATER_THAN));
         }
 
         return repository.findAll(spec);
