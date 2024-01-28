@@ -1,6 +1,7 @@
 package com.unir.loans.model.request;
 
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,28 +18,15 @@ import java.util.List;
 @NoArgsConstructor
 public class LoanRequest {
 
-	//Validacion con Jakarta Validation API
-	//Info de todas las validaciones disponibles out-of-the-box: https://jakarta.ee/specifications/bean-validation/3.0/jakarta-bean-validation-spec-3.0.html#builtinconstraints
-	//Customizacion de mensajes: https://www.baeldung.com/spring-validation-message-interpolation
-	//Customizacion de validaciones(1): https://www.baeldung.com/javax-validation-method-constraints
-	//Customizacion de validaciones (2): https://medium-parser-seven.vercel.app/?url=https://medium.com/thedevproject/unlock-the-power-of-jakarta-validation-with-spring-boot-boost-your-java-development-skills-c2ea676f1157
-	@NotNull(message = "`books` cannot be null")
-	@NotEmpty(message = "`books` cannot be empty")
-	private List<String> books;
-
-
+	@NotNull(message = "`userId` cannot be null")
 	private Long userId;
 
-
+	@NotNull(message = "`bookId` cannot be null")
 	private Long bookId;
 
+	@NotNull(message = "`dueDate` cannot be null")
+	@Future(message = "The due date should be a date in the future")
+	private Date dueDate;
 
-	private Date initalDate;
-
-
-	private Date loanedDate;
-
-
-	private Date endDate;
 
 }

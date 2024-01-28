@@ -1,7 +1,11 @@
 package com.unir.loans.controller;
 
 import com.unir.loans.model.db.Loan;
+import com.unir.loans.model.request.LoanRequest;
+import com.unir.loans.model.request.RequestResult;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unir.loans.service.LoansService;
@@ -27,21 +31,47 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Loans Controller", description = "Microservicio encargado del sistema de préstamos de una biblioteca.")
 public class LoansController {
 
-    private final LoansService service; //Inyeccion por constructor mediante @RequiredArgsConstructor. Y, también es inyección por interfaz.
+    private final LoansService service;
 
-    /*
+
     @PostMapping("/loans")
-    public ResponseEntity<Loan> createLoan(@RequestBody @Valid LoanRequest request) { //Se valida con Jakarta Validation API
-
+    @Operation(
+            operationId = "Insertar un préstamo",
+            description = "Operacion de escritura",
+            summary = "Se crea un nuevo préstamo tras comprobar que existe en el catálogo.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos del préstamo a crear.",
+                    required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoanRequest.class))),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Loan.class))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            content = @Content(mediaType = "application/json"),
+                            description = "Datos incorrectos introducidos."),
+                    @ApiResponse(
+                            responseCode = "404",
+                            content = @Content(mediaType = "application/json"),
+                            description = "Libro no encontrado."),
+                    @ApiResponse(
+                            responseCode = "409",
+                            content = @Content(mediaType = "application/json"),
+                            description = "Libro no disponible."),
+            })
+    public ResponseEntity<Loan> createLoan(@RequestBody @Valid LoanRequest request) {
+        ResponseEntity<Loan> result;
         log.info("Creating loan...");
-        Loan created = service.createLoan(request);
-
-        if (created != null) {
-            return ResponseEntity.ok(created);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-    }*/
+        RequestResult created = service.createLoan(request);
+        result = switch (created.getResult()) {
+            case 200 -> ResponseEntity.ok(created.getCreated());
+            case 404 -> ResponseEntity.notFound().build();
+            case 409 -> ResponseEntity.status(HttpStatus.CONFLICT).build();
+            default -> ResponseEntity.badRequest().build();
+        };
+        return result;
+    }
 
     @GetMapping("/loans")
     @Operation(
@@ -67,10 +97,10 @@ public class LoansController {
             @RequestParam(required = false) Date minInitialDate,
             @Parameter(name = "maxInitialDate", description = "Fecha máxima de inicio del préstamo", example = "012345")
             @RequestParam(required = false) Date maxInitialDate,
-            @Parameter(name = "minLoanedDate", description = "Fecha mínima de fecha fijada para fin del préstamo", example = "012345")
-            @RequestParam(required = false) Date minLoanedDate,
-            @Parameter(name = "maxLoanedDate", description = "Fecha máxima de fecha fijada para fin del préstamo", example = "012345")
-            @RequestParam(required = false) Date maxLoanedDate,
+            @Parameter(name = "mindueDate", description = "Fecha mínima de fecha fijada para fin del préstamo", example = "012345")
+            @RequestParam(required = false) Date mindueDate,
+            @Parameter(name = "maxdueDate", description = "Fecha máxima de fecha fijada para fin del préstamo", example = "012345")
+            @RequestParam(required = false) Date maxdueDate,
             @Parameter(name = "minEndDate", description = "Fecha mínima de fin del préstamo", example = "012345")
             @RequestParam(required = false) Date minEndDate,
             @Parameter(name = "maxEndDate", description = "Fecha máxima de fin del préstamo", example = "012345")
@@ -79,7 +109,7 @@ public class LoansController {
             @RequestParam(required = false) Boolean returned
           ) {
 
-        List<Loan> loans = service.getLoans(user,book,minInitialDate,maxInitialDate,minLoanedDate,maxLoanedDate,minEndDate,maxEndDate,returned);
+        List<Loan> loans = service.getLoans(user,book,minInitialDate,maxInitialDate,mindueDate,maxdueDate,minEndDate,maxEndDate,returned);
         return ResponseEntity.ok(Objects.requireNonNullElse(loans, Collections.emptyList()));
     }
 

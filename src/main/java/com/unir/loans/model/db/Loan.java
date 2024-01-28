@@ -29,8 +29,8 @@ public class Loan {
     @Column(name = "initial_date")
     private Date initial_date;
 
-    @Column(name = "loaned_date")
-    private Date loaned_date;
+    @Column(name = "due_date")
+    private Date due_date;
 
     @Column(name = "end_date")
     private Date end_date;
