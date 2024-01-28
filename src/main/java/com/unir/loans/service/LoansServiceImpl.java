@@ -1,6 +1,5 @@
 package com.unir.loans.service;
 
-import com.unir.loans.data.LoanJpaRepository;
 import com.unir.loans.data.LoanRepository;
 import com.unir.loans.model.Book;
 import com.unir.loans.model.db.Loan;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.unir.loans.facade.BooksFacade;
@@ -28,7 +26,7 @@ public class LoansServiceImpl implements LoansService {
   @Override
   public RequestResult createLoan(LoanRequest request) {
     RequestResult result = RequestResult.builder().created(null).result(400).build();
-    Book foundBook =booksFacade.getBook(request.getBookId().toString());
+    Book foundBook = booksFacade.getBook(request.getBookId().toString());
     if(foundBook == null){
       result.setResult(404);
     } else if (foundBook.getAvailability() < 1) {
@@ -37,8 +35,15 @@ public class LoansServiceImpl implements LoansService {
       LocalDate today = LocalDate.now();
       Loan loan = Loan.builder().user_id(request.getUserId()).book_id(foundBook.getId()).initial_date(Date.valueOf(today)).due_date(request.getDueDate()).build();
       repository.save(loan);
-      result.setCreated(loan);
-      result.setResult(200);
+
+      //Necesario bajar el availability del libro que se toma prestado
+      Book correctedBook = booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability()-1);
+      if (correctedBook!=null){
+        result.setCreated(loan);
+        result.setResult(200);
+      }else{
+        result.setResult(400);
+      }
     }
     return result;
   }

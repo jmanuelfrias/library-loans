@@ -31,3 +31,5 @@ spring:
 ## Configuracion secundaria (custom)
 getBook:
   url: http://ms-library-books/books/%s
+patchBook:
+  url: http://ms-library-books/books/%s
