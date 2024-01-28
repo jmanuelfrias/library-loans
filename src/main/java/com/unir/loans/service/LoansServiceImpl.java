@@ -1,10 +1,16 @@
 package com.unir.loans.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.unir.loans.data.LoanRepository;
 import com.unir.loans.model.Book;
 import com.unir.loans.model.db.Loan;
 import com.unir.loans.model.request.LoanRequest;
 import com.unir.loans.model.request.RequestResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,7 @@ import java.util.List;
 import com.unir.loans.facade.BooksFacade;
 
 @Service
+@Slf4j
 public class LoansServiceImpl implements LoansService {
 
   @Autowired //Inyeccion por campo (field injection). Es la menos recomendada.
@@ -22,6 +29,9 @@ public class LoansServiceImpl implements LoansService {
 
   @Autowired //Inyeccion por campo (field injection). Es la menos recomendada.
   private LoanRepository repository;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Override
   public RequestResult createLoan(LoanRequest request) {
@@ -66,6 +76,26 @@ public class LoansServiceImpl implements LoansService {
     List<Loan> loans = repository.getLoans();
     return loans.isEmpty() ? null : loans;
   }
+
+  @Override
+  public Loan updateLoan(String loanId, String updateRequest){
+    Loan loan = repository.findById(Long.valueOf(loanId));
+    if (loan != null) {
+      try {
+        JsonMergePatch jsonMergePatch = JsonMergePatch.fromJson(objectMapper.readTree(updateRequest));
+        JsonNode target = jsonMergePatch.apply(objectMapper.readTree(objectMapper.writeValueAsString(loan)));
+        Loan patched = objectMapper.treeToValue(target, Loan.class);
+        repository.returnBook(patched);
+        return patched;
+      } catch (JsonProcessingException | JsonPatchException e) {
+        log.error("Error updating loan {}", loanId, e);
+        return null;
+      }
+    } else {
+      return null;
+    }
+}
+
 
 
 }

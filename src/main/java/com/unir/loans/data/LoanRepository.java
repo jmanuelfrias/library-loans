@@ -29,6 +29,10 @@ public class LoanRepository {
         return repository.save(loan);
     }
 
+    public Loan returnBook(Loan loan) {
+        return repository.save(loan);
+    }
+
     public void delete(Loan loan) {
         repository.delete(loan);
     }

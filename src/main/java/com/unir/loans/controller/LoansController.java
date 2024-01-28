@@ -136,4 +136,36 @@ public class LoansController {
         }
     }
 
+    @PatchMapping("/loans/{loanId}")
+    @Operation(
+            operationId = "Devolver un libro",
+            description = "Operacion de escritura",
+            summary = "Se devuelve un libro por lo que se registra la fecha de devolucion y se marca como devuelto",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Modificaciones que se van a hacer al prestamo",
+                    required = true,
+                    content = @Content(mediaType = "application/merge-patch+json", schema = @Schema(implementation = String.class))),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Loan.class))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            content = @Content(mediaType = "application/json"),
+                            description = "Datos incorrectos introducidos."),
+                    @ApiResponse(
+                            responseCode = "404",
+                            content = @Content(mediaType = "application/json"),
+                            description = "No se ha encontrado el prestamo con el identificador indicado.")
+            })
+    public ResponseEntity<Loan> patchLoan(@PathVariable String loanId, @RequestBody String patchBody) {
+
+        Loan patched = service.updateLoan(loanId, patchBody);
+        if (patched != null) {
+            return ResponseEntity.ok(patched);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }
