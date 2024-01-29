@@ -85,8 +85,22 @@ public class LoansServiceImpl implements LoansService {
         JsonMergePatch jsonMergePatch = JsonMergePatch.fromJson(objectMapper.readTree(updateRequest));
         JsonNode target = jsonMergePatch.apply(objectMapper.readTree(objectMapper.writeValueAsString(loan)));
         Loan patched = objectMapper.treeToValue(target, Loan.class);
-        repository.returnBook(patched);
-        return patched;
+
+        //Need to check that the end-date is correct
+        LocalDate today = LocalDate.now();
+        LocalDate midnight = today.atStartOfDay().toLocalDate();
+
+        // Convert LocalDate to java.sql.Date
+        Date todayMidnight = Date.valueOf(midnight);
+        if (patched.getEnd_date().before(todayMidnight)){
+          return null;
+        } else{
+          repository.returnBook(patched);
+          //Necesario subir el availability del libro que se toma prestado
+          Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
+          Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
+          return patched;
+        }
       } catch (JsonProcessingException | JsonPatchException e) {
         log.error("Error updating loan {}", loanId, e);
         return null;
