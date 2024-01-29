@@ -3,6 +3,7 @@ package com.unir.loans.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.unir.loans.data.LoanRepository;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.unir.loans.facade.BooksFacade;
 
@@ -33,6 +36,7 @@ public class LoansServiceImpl implements LoansService {
   @Autowired
   private ObjectMapper objectMapper;
 
+  private static final Pattern DATE_PATTERN = Pattern.compile("\\[\"\\d{4}-\\d{2}-\\d{2}\"\\]");
   @Override
   public RequestResult createLoan(LoanRequest request) {
     RequestResult result = RequestResult.builder().created(null).result(400).build();
@@ -82,7 +86,9 @@ public class LoansServiceImpl implements LoansService {
     Loan loan = repository.findById(Long.valueOf(loanId));
     if (loan != null) {
       try {
-        JsonMergePatch jsonMergePatch = JsonMergePatch.fromJson(objectMapper.readTree(updateRequest));
+        String modifiedRequest = updateRequest.replace("[", "").replace("]", "");
+
+        JsonMergePatch jsonMergePatch = JsonMergePatch.fromJson(objectMapper.readTree(modifiedRequest));
         JsonNode target = jsonMergePatch.apply(objectMapper.readTree(objectMapper.writeValueAsString(loan)));
         Loan patched = objectMapper.treeToValue(target, Loan.class);
 
@@ -109,7 +115,5 @@ public class LoansServiceImpl implements LoansService {
       return null;
     }
 }
-
-
 
 }
