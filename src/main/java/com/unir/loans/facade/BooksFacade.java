@@ -45,7 +45,6 @@ public class BooksFacade {
   }
 
   public Book patchBook(String id, int newAvailability) {
-    try {
       String url = String.format(patchBookUrl, id);
       log.info("Modify availability of book with ID {} to {}. Request to {}", id, newAvailability, url);
       HttpHeaders headers = new HttpHeaders();
@@ -63,16 +62,6 @@ public class BooksFacade {
               Book.class);
 
         return responseEntity.getBody();
-    } catch (HttpClientErrorException e) {
-      log.error("Client Error: {}, Book with ID {}", e.getStatusCode(), id);
-      return null;
-    } catch (HttpServerErrorException e) {
-      log.error("Server Error: {}, Book with ID {}", e.getStatusCode(), id);
-      return null;
-    } catch (Exception e) {
-      log.error("Error: {}, Book with ID {}", e.getMessage(), id);
-      return null;
-    }
   }
 
 }

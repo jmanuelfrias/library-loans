@@ -41,18 +41,16 @@ public class LoansServiceImpl implements LoansService {
       LocalDate today = LocalDate.now();
       Loan loan = Loan.builder().user_id(request.getUserId()).book_id(foundBook.getId()).initial_date(Date.valueOf(today)).due_date(request.getDueDate()).build();
 
+      //Necesario bajar el availability del libro que se toma prestado
+      booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability() - 1);
       //Salvar el Loan en base de datos y comprobar que no haya habido problema
       if(repository.save(loan)!=null) {
-        //Necesario bajar el availability del libro que se toma prestado
-        Book correctedBook = booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability() - 1);
-        if (correctedBook != null) {
           result.setCreated(loan);
           result.setResult(201);
         } else {
           result.setResult(400);
         }
       }
-    }
     return result;
   }
 
@@ -93,11 +91,13 @@ public class LoansServiceImpl implements LoansService {
         Date todayMidnight = Date.valueOf(midnight);
         //Si es anterior, esta modificación no tiene sentido (asumimos que las devoluciones se registran en el día)
         if (!patched.getEnd_date().before(todayMidnight)){
-          //Modificar el loan y comprobar si ha habido algún problema del JPA
-          if (repository.returnBook(patched)!=null){
+          //Antes de modificar el loan, se va a comprobar que el libro siga en el catálogo
+          Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
+          if (foundBook!=null){
             //Necesario subir el availability del libro que se toma prestado
-            Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
-            Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
+            booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
+            //Modificar el loan y comprobar si ha habido algún problema del JPA
+            repository.returnBook(patched);
             result.setCreated(patched);
             result.setResult(200);
           }
