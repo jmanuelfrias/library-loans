@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -10,10 +11,13 @@
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-cloud-gateway-filters-master/pom.xml" />
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-inventory-orders-master/pom.xml" />
         <option value="$PROJECT_DIR$/../EjemplosUnir/pom.xml" />
+        <option value="$PROJECT_DIR$/../library-gateway/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-cloud-gateway-filters-master/pom.xml" />
+        <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-cloud-gateway-master/pom.xml" />
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-library-books-master/pom.xml" />
       </set>
     </option>

@@ -103,7 +103,7 @@ public class LoansServiceImpl implements LoansService {
           }
         }
       } catch (JsonProcessingException | JsonPatchException e) {
-        log.error("Error updating loan {}", loanId, e);
+        log.error("Error updating loan {}. There was a problem with the input parameters", loanId);
       }
     } else {
       result.setResult(404);
