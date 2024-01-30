@@ -3,7 +3,6 @@ package com.unir.loans.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.unir.loans.data.LoanRepository;
@@ -17,9 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.unir.loans.facade.BooksFacade;
 
@@ -36,27 +33,24 @@ public class LoansServiceImpl implements LoansService {
   @Autowired
   private ObjectMapper objectMapper;
 
-  private static final Pattern DATE_PATTERN = Pattern.compile("\\[\"\\d{4}-\\d{2}-\\d{2}\"\\]");
   @Override
   public RequestResult createLoan(LoanRequest request) {
     RequestResult result = RequestResult.builder().created(null).result(400).build();
     Book foundBook = booksFacade.getBook(request.getBookId().toString());
-    if(foundBook == null){
-      result.setResult(404);
-    } else if (foundBook.getAvailability() < 1) {
-      result.setResult(409);
-    } else {
+    if(foundBook != null){
       LocalDate today = LocalDate.now();
       Loan loan = Loan.builder().user_id(request.getUserId()).book_id(foundBook.getId()).initial_date(Date.valueOf(today)).due_date(request.getDueDate()).build();
-      repository.save(loan);
 
-      //Necesario bajar el availability del libro que se toma prestado
-      Book correctedBook = booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability()-1);
-      if (correctedBook!=null){
-        result.setCreated(loan);
-        result.setResult(200);
-      }else{
-        result.setResult(400);
+      //Salvar el Loan en base de datos y comprobar que no haya habido problema
+      if(repository.save(loan)!=null) {
+        //Necesario bajar el availability del libro que se toma prestado
+        Book correctedBook = booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability() - 1);
+        if (correctedBook != null) {
+          result.setCreated(loan);
+          result.setResult(201);
+        } else {
+          result.setResult(400);
+        }
       }
     }
     return result;
@@ -82,7 +76,8 @@ public class LoansServiceImpl implements LoansService {
   }
 
   @Override
-  public Loan updateLoan(String loanId, String updateRequest){
+  public RequestResult updateLoan(String loanId, String updateRequest){
+    RequestResult result = RequestResult.builder().created(null).result(400).build();
     Loan loan = repository.findById(Long.valueOf(loanId));
     if (loan != null) {
       try {
@@ -92,28 +87,28 @@ public class LoansServiceImpl implements LoansService {
         JsonNode target = jsonMergePatch.apply(objectMapper.readTree(objectMapper.writeValueAsString(loan)));
         Loan patched = objectMapper.treeToValue(target, Loan.class);
 
-        //Need to check that the end-date is correct
+        //Comprobar si el end_date que se quiere poner es anterior al día actual
         LocalDate today = LocalDate.now();
         LocalDate midnight = today.atStartOfDay().toLocalDate();
-
-        // Convert LocalDate to java.sql.Date
         Date todayMidnight = Date.valueOf(midnight);
-        if (patched.getEnd_date().before(todayMidnight)){
-          return null;
-        } else{
-          repository.returnBook(patched);
-          //Necesario subir el availability del libro que se toma prestado
-          Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
-          Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
-          return patched;
+        //Si es anterior, esta modificación no tiene sentido (asumimos que las devoluciones se registran en el día)
+        if (!patched.getEnd_date().before(todayMidnight)){
+          //Modificar el loan y comprobar si ha habido algún problema del JPA
+          if (repository.returnBook(patched)!=null){
+            //Necesario subir el availability del libro que se toma prestado
+            Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
+            Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
+            result.setCreated(patched);
+            result.setResult(200);
+          }
         }
       } catch (JsonProcessingException | JsonPatchException e) {
         log.error("Error updating loan {}", loanId, e);
-        return null;
       }
     } else {
-      return null;
+      result.setResult(404);
     }
+    return result;
 }
 
 }

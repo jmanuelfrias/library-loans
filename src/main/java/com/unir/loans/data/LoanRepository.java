@@ -74,8 +74,7 @@ public class LoanRepository {
             spec.add(new SearchStatement("end_date", (minEndDate), SearchOperation.GREATER_THAN));
         }
 
-        if (returned !=null)
-        {
+        if (returned !=null){
             spec.add(new SearchStatement("returned", (returned), SearchOperation.EQUAL));
         }
 

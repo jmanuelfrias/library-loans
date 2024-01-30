@@ -5,7 +5,6 @@ import com.unir.loans.model.request.LoanRequest;
 import com.unir.loans.model.request.RequestResult;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unir.loans.service.LoansService;
@@ -50,26 +49,13 @@ public class LoansController {
                     @ApiResponse(
                             responseCode = "400",
                             content = @Content(mediaType = "application/json"),
-                            description = "Datos incorrectos introducidos."),
-                    @ApiResponse(
-                            responseCode = "404",
-                            content = @Content(mediaType = "application/json"),
-                            description = "Libro no encontrado."),
-                    @ApiResponse(
-                            responseCode = "409",
-                            content = @Content(mediaType = "application/json"),
-                            description = "Libro no disponible."),
+                            description = "Datos incorrectos introducidos.")
             })
     public ResponseEntity<Loan> createLoan(@RequestBody @Valid LoanRequest request) {
         ResponseEntity<Loan> result;
         log.info("Creating loan...");
         RequestResult created = service.createLoan(request);
-        result = switch (created.getResult()) {
-            case 200 -> ResponseEntity.ok(created.getCreated());
-            case 404 -> ResponseEntity.notFound().build();
-            case 409 -> ResponseEntity.status(HttpStatus.CONFLICT).build();
-            default -> ResponseEntity.badRequest().build();
-        };
+        result = created.getResult()==201 ? ResponseEntity.ok(created.getCreated()) : ResponseEntity.badRequest().build();
         return result;
     }
 
@@ -97,9 +83,9 @@ public class LoansController {
             @RequestParam(required = false) Date minInitialDate,
             @Parameter(name = "maxInitialDate", description = "Fecha máxima de inicio del préstamo", example = "012345")
             @RequestParam(required = false) Date maxInitialDate,
-            @Parameter(name = "mindueDate", description = "Fecha mínima de fecha fijada para fin del préstamo", example = "012345")
+            @Parameter(name = "minDueDate", description = "Fecha mínima de fecha fijada para fin del préstamo", example = "012345")
             @RequestParam(required = false) Date mindueDate,
-            @Parameter(name = "maxdueDate", description = "Fecha máxima de fecha fijada para fin del préstamo", example = "012345")
+            @Parameter(name = "maxDueDate", description = "Fecha máxima de fecha fijada para fin del préstamo", example = "012345")
             @RequestParam(required = false) Date maxdueDate,
             @Parameter(name = "minEndDate", description = "Fecha mínima de fin del préstamo", example = "012345")
             @RequestParam(required = false) Date minEndDate,
@@ -159,13 +145,15 @@ public class LoansController {
                             description = "No se ha encontrado el prestamo con el identificador indicado.")
             })
     public ResponseEntity<Loan> patchLoan(@PathVariable String loanId, @RequestBody String patchBody) {
+        ResponseEntity<Loan> result;
+        RequestResult patched = service.updateLoan(loanId, patchBody);
+        result = switch (patched.getResult()) {
+            case 200 -> ResponseEntity.ok(patched.getCreated());
+            case 404 -> ResponseEntity.notFound().build();
+            default -> ResponseEntity.badRequest().build();
+        };
+        return result;
 
-        Loan patched = service.updateLoan(loanId, patchBody);
-        if (patched != null) {
-            return ResponseEntity.ok(patched);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
     }
 
 }
