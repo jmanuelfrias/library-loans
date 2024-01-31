@@ -10,6 +10,7 @@ import com.unir.loans.model.Book;
 import com.unir.loans.model.db.Loan;
 import com.unir.loans.model.request.LoanRequest;
 import com.unir.loans.model.request.RequestResult;
+import jakarta.ws.rs.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,12 +96,15 @@ public class LoansServiceImpl implements LoansService {
           Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
           if (foundBook!=null){
             //Necesario subir el availability del libro que se toma prestado
-            booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
+            Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
             //Modificar el loan y comprobar si ha habido algún problema del JPA
             repository.returnBook(patched);
             result.setCreated(patched);
             result.setResult(200);
+          } else {
+            result.setResult(500);
           }
+
         }
       } catch (JsonProcessingException | JsonPatchException e) {
         log.error("Error updating loan {}. There was a problem with the input parameters", loanId);

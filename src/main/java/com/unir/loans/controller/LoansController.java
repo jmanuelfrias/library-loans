@@ -79,19 +79,19 @@ public class LoansController {
             @RequestHeader Map<String, String> headers,
             @Parameter(name = "user", description = "Identificador del usuario.  Tiene que ser exacto", example = "012345")
             @RequestParam(required = false) Long user,
-            @Parameter(name = "book", description = "Identificador del libro.  Tiene que ser exacto", example = "012345")
+            @Parameter(name = "book", description = "Identificador del libro.  Tiene que ser exacto", example = "11")
             @RequestParam(required = false) Long book,
-            @Parameter(name = "minInitialDate", description = "Fecha mínima de inicio del préstamo", example = "012345")
+            @Parameter(name = "minInitialDate", description = "Fecha mínima de inicio del préstamo", example = "2023-01-25")
             @RequestParam(required = false) Date minInitialDate,
-            @Parameter(name = "maxInitialDate", description = "Fecha máxima de inicio del préstamo", example = "012345")
+            @Parameter(name = "maxInitialDate", description = "Fecha máxima de inicio del préstamo", example = "2025-05-12")
             @RequestParam(required = false) Date maxInitialDate,
-            @Parameter(name = "minDueDate", description = "Fecha mínima de fecha fijada para fin del préstamo", example = "012345")
+            @Parameter(name = "minDueDate", description = "Fecha mínima de fecha fijada para fin del préstamo", example = "2024-02-02")
             @RequestParam(required = false) Date mindueDate,
-            @Parameter(name = "maxDueDate", description = "Fecha máxima de fecha fijada para fin del préstamo", example = "012345")
+            @Parameter(name = "maxDueDate", description = "Fecha máxima de fecha fijada para fin del préstamo", example = "2024-06-09")
             @RequestParam(required = false) Date maxdueDate,
-            @Parameter(name = "minEndDate", description = "Fecha mínima de fin del préstamo", example = "012345")
+            @Parameter(name = "minEndDate", description = "Fecha mínima de fin del préstamo", example = "2023-12-12")
             @RequestParam(required = false) Date minEndDate,
-            @Parameter(name = "maxEndDate", description = "Fecha máxima de fin del préstamo", example = "012345")
+            @Parameter(name = "maxEndDate", description = "Fecha máxima de fin del préstamo", example = "2024-01-31")
             @RequestParam(required = false) Date maxEndDate,
             @Parameter(name = "returned", description = "Marca si el libro ha sido devuelto", example = "true")
             @RequestParam(required = false) Boolean returned
@@ -144,7 +144,11 @@ public class LoansController {
                     @ApiResponse(
                             responseCode = "404",
                             content = @Content(mediaType = "application/json"),
-                            description = "No se ha encontrado el prestamo con el identificador indicado.")
+                            description = "No se ha encontrado el prestamo con el identificador indicado."),
+                    @ApiResponse(
+                            responseCode = "500",
+                            content = @Content(mediaType = "application/json"),
+                            description = "Problemas con el servidor.")
             })
     public ResponseEntity<Loan> patchLoan(@PathVariable String loanId, @RequestBody String patchBody) {
         ResponseEntity<Loan> result;
@@ -152,6 +156,7 @@ public class LoansController {
         result = switch (patched.getResult()) {
             case 200 -> ResponseEntity.ok(patched.getCreated());
             case 404 -> ResponseEntity.notFound().build();
+            case 500 -> ResponseEntity.internalServerError().build();
             default -> ResponseEntity.badRequest().build();
         };
         return result;
