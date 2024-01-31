@@ -45,7 +45,7 @@ public class LoansServiceImpl implements LoansService {
       //Necesario bajar el availability del libro que se toma prestado
       booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability() - 1);
       //Salvar el Loan en base de datos y comprobar que no haya habido problema
-      if(repository.save(loan)!=null) {
+      if(repository.save(loan)!=null) { //En este caso sí podemos salvarlo despues de modificar el catálogo porque se ha validado que está bien el request anteriormente y no puede dar problemas de tener el mismo id
           result.setCreated(loan);
           result.setResult(201);
         } else {
