@@ -23,6 +23,8 @@ public class SearchCriteria<Loan> implements Specification<Loan> {
 
         List<Predicate> predicates = new LinkedList<>();
         for (SearchStatement criteria : list) {
+            //Debido a los problemas que causan los Date, tenemos que utilizar un Comparable con ellos ya que el predicates no es capaz de pasar de String a sql.Date
+            // Por tanto, para laas comparaciones que tenga sentido que sean con Date, obtenemos primero el valor en su formato adecuado
             Object val = criteria.getValue().getClass() == Date.class ? ((Date)criteria.getValue()) : criteria.getValue().toString();
             if (criteria.getOperation().equals(SearchOperation.GREATER_THAN)) {
                 predicates.add(builder.greaterThan(
