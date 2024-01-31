@@ -27,7 +27,6 @@ public class GlobalExceptionHandler {
         } else if (e instanceof HttpClientErrorException.Conflict) {
             status = HttpStatus.CONFLICT; //409
         }
-
         return ResponseEntity.status(status).build();
     }
 }

@@ -47,13 +47,12 @@ public class BooksFacade {
   public Book patchBook(String id, int newAvailability) {
       String url = String.format(patchBookUrl, id);
       log.info("Modify availability of book with ID {} to {}. Request to {}", id, newAvailability, url);
-      HttpHeaders headers = new HttpHeaders();
-      headers.setContentType(MediaType.APPLICATION_JSON);
 
+      //Al ser un PATCH se necesita una operativa más compleja que la del GET
       Map<String, Integer> availabilityMap = new HashMap<>();
       availabilityMap.put("availability", newAvailability);
 
-      HttpEntity<Map<String, Integer>> requestEntity = new HttpEntity<>(availabilityMap, headers);
+      HttpEntity<Map<String, Integer>> requestEntity = new HttpEntity<>(availabilityMap);
 
       ResponseEntity<Book> responseEntity = restTemplate.exchange(
               url,

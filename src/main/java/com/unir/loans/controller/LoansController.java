@@ -5,8 +5,6 @@ import com.unir.loans.model.request.LoanRequest;
 import com.unir.loans.model.request.RequestResult;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unir.loans.service.LoansService;
@@ -39,7 +37,7 @@ public class LoansController {
     @Operation(
             operationId = "Insertar un préstamo",
             description = "Operacion de escritura",
-            summary = "Se crea un nuevo préstamo tras comprobar que existe en el catálogo.",
+            summary = "Se crea un nuevo préstamo tras comprobar que existe el libro en el catálogo.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Datos del préstamo a crear.",
                     required = true,
@@ -65,7 +63,7 @@ public class LoansController {
     @Operation(
             operationId = "Obtener préstamos",
             description = "Operacion de lectura",
-            summary = "Se devuelve una lista de todos los préstamos almacenados en la base de datos.",
+            summary = "Se encunetra una lista de todos los préstamos almacenados en la base de datos.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -105,7 +103,7 @@ public class LoansController {
     @Operation(
             operationId = "Obtener un préstamo",
             description = "Operacion de lectura",
-            summary = "Se devuelve una préstamo a partir de su identificador.",
+            summary = "Se encuentra una préstamo a partir de su identificador.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -150,11 +148,11 @@ public class LoansController {
                             content = @Content(mediaType = "application/json"),
                             description = "Problemas con el servidor.")
             })
-    public ResponseEntity<Loan> patchLoan(@PathVariable String loanId, @RequestBody String patchBody) {
-        ResponseEntity<Loan> result;
+    public ResponseEntity<String> patchLoan(@PathVariable String loanId, @RequestBody String patchBody) {
+        ResponseEntity<String> result;
         RequestResult patched = service.updateLoan(loanId, patchBody);
         result = switch (patched.getResult()) {
-            case 200 -> ResponseEntity.ok(patched.getCreated());
+            case 200 -> ResponseEntity.ok("Préstamo devuelto");
             case 404 -> ResponseEntity.notFound().build();
             case 500 -> ResponseEntity.internalServerError().build();
             default -> ResponseEntity.badRequest().build();

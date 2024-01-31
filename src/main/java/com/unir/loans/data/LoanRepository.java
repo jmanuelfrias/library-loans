@@ -33,11 +33,6 @@ public class LoanRepository {
         return repository.save(loan);
     }
 
-    public void delete(Loan loan) {
-        repository.delete(loan);
-    }
-
-
     public List<Loan> search(Long user, Long book, Date minInitialDate, Date maxInitialDate,
                              Date mindueDate, Date maxdueDate, Date minEndDate, Date maxEndDate, Boolean returned) {
         SearchCriteria<Loan> spec = new SearchCriteria<>();

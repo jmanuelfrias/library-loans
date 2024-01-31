@@ -10,7 +10,6 @@ import com.unir.loans.model.Book;
 import com.unir.loans.model.db.Loan;
 import com.unir.loans.model.request.LoanRequest;
 import com.unir.loans.model.request.RequestResult;
-import jakarta.ws.rs.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,10 +24,10 @@ import com.unir.loans.facade.BooksFacade;
 @Slf4j
 public class LoansServiceImpl implements LoansService {
 
-  @Autowired //Inyeccion por campo (field injection). Es la menos recomendada.
+  @Autowired
   private BooksFacade booksFacade;
 
-  @Autowired //Inyeccion por campo (field injection). Es la menos recomendada.
+  @Autowired
   private LoanRepository repository;
 
   @Autowired
@@ -40,7 +39,7 @@ public class LoansServiceImpl implements LoansService {
     Book foundBook = booksFacade.getBook(request.getBookId().toString());
     if(foundBook != null){
       LocalDate today = LocalDate.now();
-      Loan loan = Loan.builder().user_id(request.getUserId()).book_id(foundBook.getId()).initial_date(Date.valueOf(today)).due_date(request.getDueDate()).build();
+      Loan loan = Loan.builder().userId(request.getUserId()).bookId(foundBook.getId()).initialDate(Date.valueOf(today)).dueDate(request.getDueDate()).build();
 
       //Necesario bajar el availability del libro que se toma prestado
       booksFacade.patchBook(request.getBookId().toString(), foundBook.getAvailability() - 1);
@@ -91,7 +90,7 @@ public class LoansServiceImpl implements LoansService {
         LocalDate midnight = today.atStartOfDay().toLocalDate();
         Date todayMidnight = Date.valueOf(midnight);
         //Si es anterior, esta modificación no tiene sentido (asumimos que las devoluciones se registran en el día)
-        if (!patched.getEnd_date().before(todayMidnight)){
+        if (!patched.getEndDate().before(todayMidnight)){
           //Modificar el loan y comprobar si ha habido algún problema del JPA
           if (repository.returnBook(patched)!=null){
             //Si el patch ha funcionado, se devolverá un 200
@@ -99,8 +98,8 @@ public class LoansServiceImpl implements LoansService {
             result.setResult(200);
             //Tras modificar el loan, se tienen que subir el availability del libro que se había cogido prestado
             try {
-              Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
-              Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability() + 1);
+              Book foundBook = booksFacade.getBook(patched.getBookId().toString());
+              Book correctedBook = booksFacade.patchBook(patched.getBookId().toString(), foundBook.getAvailability() + 1);
             } catch (Exception e){
               log.error("Problem updating the book");
             }
