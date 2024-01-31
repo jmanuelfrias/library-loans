@@ -92,19 +92,21 @@ public class LoansServiceImpl implements LoansService {
         Date todayMidnight = Date.valueOf(midnight);
         //Si es anterior, esta modificación no tiene sentido (asumimos que las devoluciones se registran en el día)
         if (!patched.getEnd_date().before(todayMidnight)){
-          //Antes de modificar el loan, se va a comprobar que el libro siga en el catálogo
-          Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
-          if (foundBook!=null){
-            //Necesario subir el availability del libro que se toma prestado
-            Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability()+1);
-            //Modificar el loan y comprobar si ha habido algún problema del JPA
-            repository.returnBook(patched);
+          //Modificar el loan y comprobar si ha habido algún problema del JPA
+          if (repository.returnBook(patched)!=null){
+            //Si el patch ha funcionado, se devolverá un 200
             result.setCreated(patched);
             result.setResult(200);
+            //Tras modificar el loan, se tienen que subir el availability del libro que se había cogido prestado
+            try {
+              Book foundBook = booksFacade.getBook(patched.getBook_id().toString());
+              Book correctedBook = booksFacade.patchBook(patched.getBook_id().toString(), foundBook.getAvailability() + 1);
+            } catch (Exception e){
+              log.error("Problem updating the book");
+            }
           } else {
             result.setResult(500);
           }
-
         }
       } catch (JsonProcessingException | JsonPatchException e) {
         log.error("Error updating loan {}. There was a problem with the input parameters", loanId);
