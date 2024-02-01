@@ -20,19 +20,19 @@ public class Loan {
     private Long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Long user_id;
 
     @Column(name = "book_id")
-    private Long bookId;
+    private Long book_id;
 
     @Column(name = "initial_date")
-    private Date initialDate;
+    private Date initial_date;
 
     @Column(name = "due_date")
-    private Date dueDate;
+    private Date due_date;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private Date end_date;
 
     @Column(name = "returned")
     private Boolean returned;

@@ -63,7 +63,7 @@ public class LoansController {
     @Operation(
             operationId = "Obtener préstamos",
             description = "Operacion de lectura",
-            summary = "Se encunetra una lista de todos los préstamos almacenados en la base de datos.",
+            summary = "Se encuentra una lista de todos los préstamos almacenados en la base de datos.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
