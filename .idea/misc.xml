@@ -15,13 +15,17 @@
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-inventory-orders-master/pom.xml" />
         <option value="$PROJECT_DIR$/../EjemplosUnir/pom.xml" />
         <option value="$PROJECT_DIR$/../library-gateway/pom.xml" />
+        <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-inventory-products-mysql-master/pom.xml" />
+        <option value="$PROJECT_DIR$/../library-loans - copia/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-cloud-gateway-filters-master/pom.xml" />
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-cloud-gateway-master/pom.xml" />
+        <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-inventory-products-mysql-master/pom.xml" />
         <option value="$USER_HOME$/Downloads/CodigoEjemplo/back-end-library-books-master/pom.xml" />
+        <option value="$PROJECT_DIR$/../library-loans - copia/pom.xml" />
       </set>
     </option>
   </component>
